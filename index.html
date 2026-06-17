@@ -125,15 +125,6 @@
             color: #0a0e14;
             box-shadow: 0 0 24px #ff5577;
         }
-        .btn-vip {
-            border-color: #ffaa00;
-            color: #ffaa00;
-        }
-        .btn-vip:hover {
-            background: #ffaa00;
-            color: #0a0e14;
-            box-shadow: 0 0 24px #ffaa00;
-        }
         .footer {
             margin-top: 1.8rem;
             font-size: 0.7rem;
@@ -167,7 +158,6 @@
             font-weight: bold;
             text-shadow: 0 0 10px #ffaa00;
         }
-        /* Popup trạng thái */
         .status-popup {
             position: fixed;
             top: 50%;
@@ -204,7 +194,6 @@
     </style>
 </head>
 <body>
-<!-- Popup trạng thái -->
 <div class="overlay" id="overlay"></div>
 <div class="status-popup" id="statusPopup">
     <div class="spinner"></div>
@@ -231,7 +220,6 @@
     <div class="btn-group">
         <button class="btn" id="confirmBtn">XÁC NHẬN TIẾN HÀNH</button>
         <button class="btn btn-danger" id="getKeyBtn">GET KEY FREE</button>
-        <button class="btn btn-vip" id="vipKeyBtn">⚡ GET KEY VIP (link4sub)</button>
     </div>
 
     <div id="keyDisplay">▶ DÁN KEY HOẶC BẤM GET KEY</div>
@@ -282,7 +270,6 @@
         const licenseInput = document.getElementById('licenseInput');
         const confirmBtn = document.getElementById('confirmBtn');
         const getKeyBtn = document.getElementById('getKeyBtn');
-        const vipKeyBtn = document.getElementById('vipKeyBtn');
         const keyDisplay = document.getElementById('keyDisplay');
         const solitudeTrigger = document.getElementById('solitudeTrigger');
         const overlay = document.getElementById('overlay');
@@ -328,49 +315,34 @@
             }
         });
 
-        // === GET KEY FREE (sinh key thường) ===
+        // === GET KEY FREE (link4sub) ===
         getKeyBtn.addEventListener('click', function() {
-            const newKey = generateKey();
-            licenseInput.value = newKey;
-            keyDisplay.textContent = '🆓 KEY FREE: ' + newKey;
-            keyDisplay.style.color = '#aaffdd';
-            keyDisplay.style.textShadow = 'none';
-        });
-
-        // === GET KEY VIP (link4sub) ===
-        vipKeyBtn.addEventListener('click', function() {
             // Hiện popup thông báo chuyển hướng
-            showPopup('⏳ Đang chuyển hướng qua link4sub... Vui lòng hoàn thành 2 bước để nhận key VIP');
+            showPopup('⏳ Đang chuyển hướng qua link4sub... Vui lòng hoàn thành 2 bước để nhận key');
 
-            // Mở link4sub trong tab mới (vì hầu hết trình duyệt chặn popup)
-            // Đồng thời lưu thời điểm bắt đầu
-            const startTime = Date.now();
+            // Mở link4sub trong tab mới
             window.open('https://link4sub.com/oWpbbpgDoM', '_blank');
 
             // Đóng popup sau 3 giây và hướng dẫn quay lại
             setTimeout(function() {
                 hidePopup();
-                keyDisplay.textContent = '📌 Đã mở link4sub trong tab mới. Sau khi hoàn thành 2 bước, quay lại trang này và key VIP sẽ tự động được điền.';
+                keyDisplay.textContent = '📌 Đã mở link4sub trong tab mới. Sau khi hoàn thành 2 bước, quay lại trang này và key sẽ tự động được điền.';
                 keyDisplay.style.color = '#ffaa44';
                 keyDisplay.style.textShadow = 'none';
 
-                // Mô phỏng nhận key từ link4sub sau 15 giây (thời gian trung bình hoàn thành)
-                // Trong thực tế, cần có cơ chế callback từ link4sub, nhưng link4sub không hỗ trợ
-                // Nên ta dùng cơ chế giả lập: tự sinh key VIP sau khi người dùng quay lại
+                // Kiểm tra khi người dùng quay lại
                 let checkInterval = setInterval(function() {
-                    // Kiểm tra nếu tab đang được focus lại (người dùng đã quay lại)
                     if (document.hasFocus()) {
-                        // Tạo key VIP ngẫu nhiên
-                        const vipKey = generateVipKey();
-                        licenseInput.value = vipKey;
-                        keyDisplay.textContent = '👑 KEY VIP TỪ link4sub: ' + vipKey + ' (đã tự động điền)';
-                        keyDisplay.style.color = '#ffaa00';
-                        keyDisplay.style.textShadow = '0 0 20px #ffaa00';
+                        // Tạo key thường ngẫu nhiên (mô phỏng key từ link4sub)
+                        const newKey = generateKey();
+                        licenseInput.value = newKey;
+                        keyDisplay.textContent = '🔑 KEY TỪ link4sub: ' + newKey + ' (đã tự động điền)';
+                        keyDisplay.style.color = '#00ffc8';
+                        keyDisplay.style.textShadow = 'none';
                         clearInterval(checkInterval);
                     }
-                }, 3000); // Kiểm tra mỗi 3 giây
+                }, 3000);
 
-                // Dừng kiểm tra sau 60 giây để tránh treo
                 setTimeout(function() {
                     clearInterval(checkInterval);
                 }, 60000);
@@ -395,14 +367,14 @@
         // Bắt sự kiện khi người dùng quay lại tab (từ link4sub)
         document.addEventListener('visibilitychange', function() {
             if (document.visibilityState === 'visible') {
-                // Nếu ô key đang trống hoặc chưa có key VIP, tự sinh key VIP
                 const currentKey = licenseInput.value.trim();
-                if (currentKey === '' || !currentKey.startsWith('Ducanh-VIP-')) {
-                    const vipKey = generateVipKey();
-                    licenseInput.value = vipKey;
-                    keyDisplay.textContent = '👑 KEY VIP TỪ link4sub: ' + vipKey + ' (tự động điền khi quay lại)';
-                    keyDisplay.style.color = '#ffaa00';
-                    keyDisplay.style.textShadow = '0 0 20px #ffaa00';
+                // Nếu ô key đang trống hoặc chưa có key hợp lệ, tự sinh key thường
+                if (currentKey === '' || !/^Ducanh-[0-9]{4}-[0-9]{4}$/.test(currentKey)) {
+                    const newKey = generateKey();
+                    licenseInput.value = newKey;
+                    keyDisplay.textContent = '🔑 KEY TỪ link4sub: ' + newKey + ' (tự động điền khi quay lại)';
+                    keyDisplay.style.color = '#00ffc8';
+                    keyDisplay.style.textShadow = 'none';
                 }
             }
         });
