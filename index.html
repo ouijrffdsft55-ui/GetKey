@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GetKeyFree · Ducanh</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0e14;
+            color: #00ffc8;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .container {
+            background: #131a22;
+            padding: 2rem 2.5rem;
+            border: 1px solid #00ffc8;
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(0, 255, 200, 0.15);
+            max-width: 600px;
+            width: 100%;
+        }
+        .status {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px dashed #2a3a44;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .status span { color: #88b8b0; }
+        .status .highlight { color: #00ffc8; font-weight: bold; }
+        .title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-shadow: 0 0 12px #00ffc8;
+            margin: 0.25rem 0;
+        }
+        .sub {
+            color: #7a9a92;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #1f2e36;
+            padding-bottom: 1rem;
+        }
+        .sys {
+            background: #0e151d;
+            padding: 0.6rem;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-around;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            border: 1px solid #1f313a;
+        }
+        .sys .ping-value {
+            color: #00ffc8;
+            font-weight: bold;
+        }
+        .license-box {
+            background: #0b1118;
+            padding: 1rem;
+            border: 1px solid #00c8a0;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+        .license-box input {
+            background: transparent;
+            border: none;
+            color: #00ffc8;
+            font-size: 1.4rem;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            width: 100%;
+            outline: none;
+            letter-spacing: 3px;
+        }
+        .license-box input::placeholder {
+            color: #2a4a4a;
+            letter-spacing: 1px;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: center;
+            margin: 1.8rem 0 1rem;
+        }
+        .btn {
+            background: #0e1a20;
+            border: 1px solid #00c8a0;
+            color: #00ffc8;
+            padding: 0.6rem 1.6rem;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.2s;
+            border-radius: 30px;
+            letter-spacing: 2px;
+            font-size: 0.75rem;
+            background: transparent;
+        }
+        .btn:hover {
+            background: #00ffc8;
+            color: #0a0e14;
+            box-shadow: 0 0 24px #00ffc8;
+        }
+        .btn-danger {
+            border-color: #ff5577;
+            color: #ff5577;
+        }
+        .btn-danger:hover {
+            background: #ff5577;
+            color: #0a0e14;
+            box-shadow: 0 0 24px #ff5577;
+        }
+        .footer {
+            margin-top: 1.8rem;
+            font-size: 0.7rem;
+            color: #3a5a5a;
+            border-top: 1px solid #1a2a2a;
+            padding-top: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+        .footer span { cursor: pointer; }
+        .footer span:hover { color: #00ffc8; text-shadow: 0 0 8px #00ffc8; }
+        #keyDisplay {
+            background: #0b1118;
+            padding: 0.5rem;
+            border-radius: 6px;
+            margin: 0.5rem 0;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            min-height: 2.8rem;
+            color: #aaffdd;
+            border: 1px dashed #1f3a3a;
+        }
+        .note {
+            font-size: 0.65rem;
+            color: #3f6a6a;
+            margin-top: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <div class="status">
+        <span>🔒 GetKeyFree <span class="highlight">●</span></span>
+        <span>By Ducanh</span>
+    </div>
+    <div class="title">GetKey</div>
+    <div class="sub">HỆ THỐNG: MƯỢT MÀ</div>
+    <div class="sys">
+        <span>PING: <span class="ping-value" id="pingDisplay">--</span>ms</span>
+        <span>ONLINE: 121</span>
+    </div>
+
+    <div style="text-align: left; font-size: 0.8rem; color: #7a9a92; margin-bottom: 0.2rem;">DÁN KEY VÀO Ô ĐỂ TIẾN HÀNH</div>
+    <div class="license-box">
+        <input type="text" id="licenseInput" placeholder="Paste Key" value="">
+    </div>
+
+    <div class="btn-group">
+        <button class="btn" id="confirmBtn">XÁC NHẬN TIẾN HÀNH</button>
+        <button class="btn btn-danger" id="getKeyBtn">GET KEY FREE</button>
+    </div>
+
+    <div id="keyDisplay">▶ DÁN KEY HOẶC BẤM GET KEY</div>
+    <div class="footer">
+        <span id="solitudeTrigger">Mua Key Vip Ib Zalo : 0325976017</span>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // === PING REAL ===
+        function measurePing() {
+            const start = performance.now();
+            fetch(window.location.href, { method: 'HEAD', cache: 'no-store' })
+                .then(() => {
+                    const end = performance.now();
+                    const ping = Math.round(end - start);
+                    document.getElementById('pingDisplay').textContent = ping;
+                })
+                .catch(() => {
+                    document.getElementById('pingDisplay').textContent = '--';
+                });
+        }
+        measurePing();
+        setInterval(measurePing, 5000);
+
+        // === GENERATE KEY FREE (thường) ===
+        function generateKey() {
+            const chars = '0123456789';
+            let seg1 = '', seg2 = '';
+            for (let i = 0; i < 4; i++) {
+                seg1 += chars.charAt(Math.floor(Math.random() * chars.length));
+                seg2 += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return 'Ducanh-' + seg1 + '-' + seg2;
+        }
+
+        function generateVipKey() {
+            const chars = '0123456789';
+            let seg = '';
+            for (let i = 0; i < 4; i++) {
+                seg += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return 'Ducanh-VIP-' + seg;
+        }
+
+        const licenseInput = document.getElementById('licenseInput');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const getKeyBtn = document.getElementById('getKeyBtn');
+        const keyDisplay = document.getElementById('keyDisplay');
+        const solitudeTrigger = document.getElementById('solitudeTrigger');
+
+        // === XÁC NHẬN ===
+        confirmBtn.addEventListener('click', function() {
+            let currentKey = licenseInput.value.trim();
+            if (currentKey === '') {
+                keyDisplay.textContent = '⚠ LỖI: KEY TRỐNG';
+                keyDisplay.style.color = '#ff5577';
+                keyDisplay.style.textShadow = 'none';
+                return;
+            }
+
+            const regexNormal = /^Ducanh-[0-9]{4}-[0-9]{4}$/;
+            const regexVip = /^Ducanh-VIP-[0-9]{4}$/;
+
+            if (regexVip.test(currentKey)) {
+                keyDisplay.textContent = '👑 XÁC NHẬN VIP THÀNH CÔNG · KEY: ' + currentKey;
+                keyDisplay.style.color = '#ffaa00';
+                keyDisplay.style.textShadow = '0 0 20px #ffaa00';
+            } else if (regexNormal.test(currentKey)) {
+                keyDisplay.textContent = '✅ XÁC NHẬN THÀNH CÔNG · KEY: ' + currentKey;
+                keyDisplay.style.color = '#00ffc8';
+                keyDisplay.style.textShadow = 'none';
+            } else {
+                keyDisplay.textContent = '❌ KEY KHÔNG HỢP LỆ';
+                keyDisplay.style.color = '#ff5577';
+                keyDisplay.style.textShadow = 'none';
+            }
+        });
+
+        // === GET KEY FREE ===
+        getKeyBtn.addEventListener('click', function() {
+            const newKey = generateKey();
+            licenseInput.value = newKey;
+            keyDisplay.textContent = '🆓 KEY FREE: ' + newKey;
+            keyDisplay.style.color = '#aaffdd';
+            keyDisplay.style.textShadow = 'none';
+        });
+
+        // === MUA KEY VIP ===
+        solitudeTrigger.addEventListener('click', function() {
+            const sampleVip = generateVipKey();
+            keyDisplay.textContent = '📞 LIÊN HỆ ZALO : 0325976017 ĐỂ MUA KEY VIP · Ví dụ: ' + sampleVip;
+            keyDisplay.style.color = '#ffaa44';
+            keyDisplay.style.textShadow = 'none';
+        });
+
+        // === INIT ===
+        window.addEventListener('load', function() {
+            keyDisplay.textContent = '▶ DÁN KEY HOẶC BẤM GET KEY';
+            keyDisplay.style.color = '#7a9a92';
+            keyDisplay.style.textShadow = 'none';
+        });
+    })();
+</script>
+</body>
+</html>
