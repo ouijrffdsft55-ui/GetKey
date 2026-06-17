@@ -125,6 +125,15 @@
             color: #0a0e14;
             box-shadow: 0 0 24px #ff5577;
         }
+        .btn-vip {
+            border-color: #ffaa00;
+            color: #ffaa00;
+        }
+        .btn-vip:hover {
+            background: #ffaa00;
+            color: #0a0e14;
+            box-shadow: 0 0 24px #ffaa00;
+        }
         .footer {
             margin-top: 1.8rem;
             font-size: 0.7rem;
@@ -153,9 +162,55 @@
             color: #3f6a6a;
             margin-top: 0.8rem;
         }
+        .vip-badge {
+            color: #ffaa00;
+            font-weight: bold;
+            text-shadow: 0 0 10px #ffaa00;
+        }
+        /* Popup trạng thái */
+        .status-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #131a22;
+            padding: 2rem 3rem;
+            border: 2px solid #ffaa00;
+            border-radius: 16px;
+            box-shadow: 0 0 60px rgba(255, 170, 0, 0.3);
+            z-index: 9999;
+            display: none;
+            text-align: center;
+            min-width: 300px;
+        }
+        .status-popup .spinner {
+            border: 4px solid #1f2e36;
+            border-top: 4px solid #ffaa00;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .status-popup p { color: #aaffdd; font-size: 1rem; }
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 9998;
+            display: none;
+        }
     </style>
 </head>
 <body>
+<!-- Popup trạng thái -->
+<div class="overlay" id="overlay"></div>
+<div class="status-popup" id="statusPopup">
+    <div class="spinner"></div>
+    <p id="popupText">Đang chuyển hướng qua link4sub...</p>
+</div>
+
 <div class="container" id="app">
     <div class="status">
         <span>🔒 GetKeyFree <span class="highlight">●</span></span>
@@ -176,12 +231,14 @@
     <div class="btn-group">
         <button class="btn" id="confirmBtn">XÁC NHẬN TIẾN HÀNH</button>
         <button class="btn btn-danger" id="getKeyBtn">GET KEY FREE</button>
+        <button class="btn btn-vip" id="vipKeyBtn">⚡ GET KEY VIP (link4sub)</button>
     </div>
 
     <div id="keyDisplay">▶ DÁN KEY HOẶC BẤM GET KEY</div>
     <div class="footer">
         <span id="solitudeTrigger">Mua Key Vip Ib Zalo : 0325976017</span>
     </div>
+    <div class="note">* Key thường: <span class="vip-badge">Ducanh-XXXX-XXXX</span> · Key VIP: <span class="vip-badge">Ducanh-VIP-XXXX</span></div>
 </div>
 
 <script>
@@ -225,8 +282,23 @@
         const licenseInput = document.getElementById('licenseInput');
         const confirmBtn = document.getElementById('confirmBtn');
         const getKeyBtn = document.getElementById('getKeyBtn');
+        const vipKeyBtn = document.getElementById('vipKeyBtn');
         const keyDisplay = document.getElementById('keyDisplay');
         const solitudeTrigger = document.getElementById('solitudeTrigger');
+        const overlay = document.getElementById('overlay');
+        const popup = document.getElementById('statusPopup');
+        const popupText = document.getElementById('popupText');
+
+        function showPopup(msg) {
+            popupText.textContent = msg;
+            overlay.style.display = 'block';
+            popup.style.display = 'block';
+        }
+
+        function hidePopup() {
+            overlay.style.display = 'none';
+            popup.style.display = 'none';
+        }
 
         // === XÁC NHẬN ===
         confirmBtn.addEventListener('click', function() {
@@ -256,13 +328,53 @@
             }
         });
 
-        // === GET KEY FREE ===
+        // === GET KEY FREE (sinh key thường) ===
         getKeyBtn.addEventListener('click', function() {
             const newKey = generateKey();
             licenseInput.value = newKey;
             keyDisplay.textContent = '🆓 KEY FREE: ' + newKey;
             keyDisplay.style.color = '#aaffdd';
             keyDisplay.style.textShadow = 'none';
+        });
+
+        // === GET KEY VIP (link4sub) ===
+        vipKeyBtn.addEventListener('click', function() {
+            // Hiện popup thông báo chuyển hướng
+            showPopup('⏳ Đang chuyển hướng qua link4sub... Vui lòng hoàn thành 2 bước để nhận key VIP');
+
+            // Mở link4sub trong tab mới (vì hầu hết trình duyệt chặn popup)
+            // Đồng thời lưu thời điểm bắt đầu
+            const startTime = Date.now();
+            window.open('https://link4sub.com/oWpbbpgDoM', '_blank');
+
+            // Đóng popup sau 3 giây và hướng dẫn quay lại
+            setTimeout(function() {
+                hidePopup();
+                keyDisplay.textContent = '📌 Đã mở link4sub trong tab mới. Sau khi hoàn thành 2 bước, quay lại trang này và key VIP sẽ tự động được điền.';
+                keyDisplay.style.color = '#ffaa44';
+                keyDisplay.style.textShadow = 'none';
+
+                // Mô phỏng nhận key từ link4sub sau 15 giây (thời gian trung bình hoàn thành)
+                // Trong thực tế, cần có cơ chế callback từ link4sub, nhưng link4sub không hỗ trợ
+                // Nên ta dùng cơ chế giả lập: tự sinh key VIP sau khi người dùng quay lại
+                let checkInterval = setInterval(function() {
+                    // Kiểm tra nếu tab đang được focus lại (người dùng đã quay lại)
+                    if (document.hasFocus()) {
+                        // Tạo key VIP ngẫu nhiên
+                        const vipKey = generateVipKey();
+                        licenseInput.value = vipKey;
+                        keyDisplay.textContent = '👑 KEY VIP TỪ link4sub: ' + vipKey + ' (đã tự động điền)';
+                        keyDisplay.style.color = '#ffaa00';
+                        keyDisplay.style.textShadow = '0 0 20px #ffaa00';
+                        clearInterval(checkInterval);
+                    }
+                }, 3000); // Kiểm tra mỗi 3 giây
+
+                // Dừng kiểm tra sau 60 giây để tránh treo
+                setTimeout(function() {
+                    clearInterval(checkInterval);
+                }, 60000);
+            }, 3000);
         });
 
         // === MUA KEY VIP ===
@@ -278,6 +390,21 @@
             keyDisplay.textContent = '▶ DÁN KEY HOẶC BẤM GET KEY';
             keyDisplay.style.color = '#7a9a92';
             keyDisplay.style.textShadow = 'none';
+        });
+
+        // Bắt sự kiện khi người dùng quay lại tab (từ link4sub)
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                // Nếu ô key đang trống hoặc chưa có key VIP, tự sinh key VIP
+                const currentKey = licenseInput.value.trim();
+                if (currentKey === '' || !currentKey.startsWith('Ducanh-VIP-')) {
+                    const vipKey = generateVipKey();
+                    licenseInput.value = vipKey;
+                    keyDisplay.textContent = '👑 KEY VIP TỪ link4sub: ' + vipKey + ' (tự động điền khi quay lại)';
+                    keyDisplay.style.color = '#ffaa00';
+                    keyDisplay.style.textShadow = '0 0 20px #ffaa00';
+                }
+            }
         });
     })();
 </script>
