@@ -197,7 +197,7 @@
 <div class="overlay" id="overlay"></div>
 <div class="status-popup" id="statusPopup">
     <div class="spinner"></div>
-    <p id="popupText">Đang chuyển hướng qua link4sub...</p>
+    <p id="popupText">⏳ Đang chuyển hướng qua layma.net... Vui lòng hoàn thành để nhận key</p>
 </div>
 
 <div class="container" id="app">
@@ -315,28 +315,23 @@
             }
         });
 
-        // === GET KEY FREE (link4sub) ===
+        // === GET KEY FREE (layma.net) ===
         getKeyBtn.addEventListener('click', function() {
-            // Hiện popup thông báo chuyển hướng
-            showPopup('⏳ Đang chuyển hướng qua link4sub... Vui lòng hoàn thành 2 bước để nhận key');
+            showPopup('⏳ Đang chuyển hướng qua layma.net... Vui lòng hoàn thành để nhận key');
 
-            // Mở link4sub trong tab mới
-            window.open('https://link4sub.com/oWpbbpgDoM', '_blank');
+            window.open('https://layma.net/K2tZ7tRRr', '_blank');
 
-            // Đóng popup sau 3 giây và hướng dẫn quay lại
             setTimeout(function() {
                 hidePopup();
-                keyDisplay.textContent = '📌 Đã mở link4sub trong tab mới. Sau khi hoàn thành 2 bước, quay lại trang này và key sẽ tự động được điền.';
+                keyDisplay.textContent = '📌 Đã mở link layma.net trong tab mới. Sau khi hoàn thành, quay lại trang này và key sẽ tự động được điền.';
                 keyDisplay.style.color = '#ffaa44';
                 keyDisplay.style.textShadow = 'none';
 
-                // Kiểm tra khi người dùng quay lại
                 let checkInterval = setInterval(function() {
                     if (document.hasFocus()) {
-                        // Tạo key thường ngẫu nhiên (mô phỏng key từ link4sub)
                         const newKey = generateKey();
                         licenseInput.value = newKey;
-                        keyDisplay.textContent = '🔑 KEY TỪ link4sub: ' + newKey + ' (đã tự động điền)';
+                        keyDisplay.textContent = '🔑 KEY TỪ layma.net: ' + newKey + ' (đã tự động điền)';
                         keyDisplay.style.color = '#00ffc8';
                         keyDisplay.style.textShadow = 'none';
                         clearInterval(checkInterval);
@@ -364,15 +359,13 @@
             keyDisplay.style.textShadow = 'none';
         });
 
-        // Bắt sự kiện khi người dùng quay lại tab (từ link4sub)
         document.addEventListener('visibilitychange', function() {
             if (document.visibilityState === 'visible') {
                 const currentKey = licenseInput.value.trim();
-                // Nếu ô key đang trống hoặc chưa có key hợp lệ, tự sinh key thường
                 if (currentKey === '' || !/^Ducanh-[0-9]{4}-[0-9]{4}$/.test(currentKey)) {
                     const newKey = generateKey();
                     licenseInput.value = newKey;
-                    keyDisplay.textContent = '🔑 KEY TỪ link4sub: ' + newKey + ' (tự động điền khi quay lại)';
+                    keyDisplay.textContent = '🔑 KEY TỪ layma.net: ' + newKey + ' (tự động điền khi quay lại)';
                     keyDisplay.style.color = '#00ffc8';
                     keyDisplay.style.textShadow = 'none';
                 }
