@@ -226,7 +226,7 @@
     <div class="footer">
         <span id="solitudeTrigger">Mua Key Vip Ib Zalo : 0325976017</span>
     </div>
-    <div class="note">* Key thường: <span class="vip-badge">Ducanh-XXXX-XXXX</span> · Key VIP: <span class="vip-badge">Ducanh-VIP-XXXX</span></div>
+    <div class="note">* Key: <span class="vip-badge">Ducanh-XXXX-XXXX</span> (X là số ngẫu nhiên)</div>
 </div>
 
 <script>
@@ -247,7 +247,7 @@
         measurePing();
         setInterval(measurePing, 5000);
 
-        // === GENERATE KEY FREE (thường) ===
+        // === GENERATE KEY (chỉ có dạng Ducanh-XXXX-XXXX) ===
         function generateKey() {
             const chars = '0123456789';
             let seg1 = '', seg2 = '';
@@ -256,15 +256,6 @@
                 seg2 += chars.charAt(Math.floor(Math.random() * chars.length));
             }
             return 'Ducanh-' + seg1 + '-' + seg2;
-        }
-
-        function generateVipKey() {
-            const chars = '0123456789';
-            let seg = '';
-            for (let i = 0; i < 4; i++) {
-                seg += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return 'Ducanh-VIP-' + seg;
         }
 
         const licenseInput = document.getElementById('licenseInput');
@@ -298,13 +289,8 @@
             }
 
             const regexNormal = /^Ducanh-[0-9]{4}-[0-9]{4}$/;
-            const regexVip = /^Ducanh-VIP-[0-9]{4}$/;
 
-            if (regexVip.test(currentKey)) {
-                keyDisplay.textContent = '👑 XÁC NHẬN VIP THÀNH CÔNG · KEY: ' + currentKey;
-                keyDisplay.style.color = '#ffaa00';
-                keyDisplay.style.textShadow = '0 0 20px #ffaa00';
-            } else if (regexNormal.test(currentKey)) {
+            if (regexNormal.test(currentKey)) {
                 keyDisplay.textContent = '✅ XÁC NHẬN THÀNH CÔNG · KEY: ' + currentKey;
                 keyDisplay.style.color = '#00ffc8';
                 keyDisplay.style.textShadow = 'none';
@@ -346,8 +332,8 @@
 
         // === MUA KEY VIP ===
         solitudeTrigger.addEventListener('click', function() {
-            const sampleVip = generateVipKey();
-            keyDisplay.textContent = '📞 LIÊN HỆ ZALO : 0325976017 ĐỂ MUA KEY VIP · Ví dụ: ' + sampleVip;
+            const sampleVip = generateKey();
+            keyDisplay.textContent = '📞 LIÊN HỆ ZALO : 0325976017 ĐỂ MUA KEY · Ví dụ: ' + sampleVip;
             keyDisplay.style.color = '#ffaa44';
             keyDisplay.style.textShadow = 'none';
         });
