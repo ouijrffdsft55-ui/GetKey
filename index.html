@@ -3,360 +3,348 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GetKeyFree · Ducanh</title>
+    <title>Get Key Free</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
         body {
-            background: #0a0e14;
-            color: #00ffc8;
-            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            text-align: center;
+            padding: 20px;
         }
         .container {
-            background: #131a22;
-            padding: 2rem 2.5rem;
-            border: 1px solid #00ffc8;
-            border-radius: 12px;
-            box-shadow: 0 0 30px rgba(0, 255, 200, 0.15);
-            max-width: 600px;
+            background: #1a1a1a;
+            border: 2px solid #ff8800;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 450px;
             width: 100%;
+            box-shadow: 0 0 60px #ff880033;
+            text-align: center;
         }
-        .status {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 1px dashed #2a3a44;
-            padding-bottom: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-        .status span { color: #88b8b0; }
-        .status .highlight { color: #00ffc8; font-weight: bold; }
-        .title {
-            font-size: 2.2rem;
-            font-weight: 700;
-            letter-spacing: 4px;
-            text-shadow: 0 0 12px #00ffc8;
-            margin: 0.25rem 0;
+        h1 {
+            color: #ff8800;
+            font-size: 28px;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            text-shadow: 0 0 30px #ff880066;
         }
         .sub {
-            color: #7a9a92;
-            font-size: 0.85rem;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid #1f2e36;
-            padding-bottom: 1rem;
+            color: #ff8800;
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 30px;
         }
-        .sys {
-            background: #0e151d;
-            padding: 0.6rem;
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-around;
-            font-size: 0.95rem;
-            margin-bottom: 2rem;
-            border: 1px solid #1f313a;
+        .key-display {
+            background: #0d0d0d;
+            border: 2px solid #00ff88;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            position: relative;
         }
-        .sys .ping-value {
-            color: #00ffc8;
+        .key-label {
+            color: #888;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .key-value {
+            color: #00ff88;
+            font-size: 42px;
             font-weight: bold;
-        }
-        .license-box {
-            background: #0b1118;
-            padding: 1rem;
-            border: 1px solid #00c8a0;
-            border-radius: 8px;
-            margin: 1.5rem 0;
-        }
-        .license-box input {
-            background: transparent;
-            border: none;
-            color: #00ffc8;
-            font-size: 1.4rem;
             font-family: 'Courier New', monospace;
-            text-align: center;
-            width: 100%;
-            outline: none;
-            letter-spacing: 3px;
+            letter-spacing: 8px;
+            word-break: break-all;
+            margin: 10px 0;
+            text-shadow: 0 0 20px #00ff8844;
         }
-        .license-box input::placeholder {
-            color: #2a4a4a;
-            letter-spacing: 1px;
-            font-size: 1rem;
+        .key-status {
+            display: inline-block;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-size: 14px;
             font-weight: bold;
+            margin: 5px 0;
+        }
+        .status-waiting {
+            background: #ff880022;
+            color: #ff8800;
+            border: 1px solid #ff8800;
+        }
+        .status-active {
+            background: #00ff8822;
+            color: #00ff88;
+            border: 1px solid #00ff88;
         }
         .btn-group {
             display: flex;
+            gap: 10px;
             flex-wrap: wrap;
-            gap: 0.8rem;
-            justify-content: center;
-            margin: 1.8rem 0 1rem;
+            margin: 20px 0;
         }
         .btn {
-            background: #0e1a20;
-            border: 1px solid #00c8a0;
-            color: #00ffc8;
-            padding: 0.6rem 1.6rem;
-            font-family: 'Courier New', monospace;
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
             font-weight: bold;
-            text-transform: uppercase;
+            font-size: 15px;
             cursor: pointer;
-            transition: 0.2s;
-            border-radius: 30px;
-            letter-spacing: 2px;
-            font-size: 0.75rem;
-            background: transparent;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 120px;
         }
-        .btn:hover {
-            background: #00ffc8;
-            color: #0a0e14;
-            box-shadow: 0 0 24px #00ffc8;
+        .btn-copy {
+            background: #ff8800;
+            color: #0a0a0a;
         }
-        .btn-danger {
-            border-color: #ff5577;
-            color: #ff5577;
+        .btn-copy:hover {
+            background: #dd7700;
+            box-shadow: 0 0 30px #ff880066;
+            transform: scale(1.02);
         }
-        .btn-danger:hover {
-            background: #ff5577;
-            color: #0a0e14;
-            box-shadow: 0 0 24px #ff5577;
+        .btn-spam {
+            background: #ff3344;
+            color: #fff;
         }
-        .footer {
-            margin-top: 1.8rem;
-            font-size: 0.7rem;
-            color: #3a5a5a;
-            border-top: 1px solid #1a2a2a;
-            padding-top: 1rem;
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
+        .btn-spam:hover {
+            background: #cc2233;
+            box-shadow: 0 0 30px #ff334466;
+            transform: scale(1.02);
         }
-        .footer span { cursor: pointer; }
-        .footer span:hover { color: #00ffc8; text-shadow: 0 0 8px #00ffc8; }
-        #keyDisplay {
-            background: #0b1118;
-            padding: 0.5rem;
-            border-radius: 6px;
-            margin: 0.5rem 0;
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-            min-height: 2.8rem;
-            color: #aaffdd;
-            border: 1px dashed #1f3a3a;
-        }
-        .note {
-            font-size: 0.65rem;
-            color: #3f6a6a;
-            margin-top: 0.8rem;
-        }
-        .vip-badge {
-            color: #ffaa00;
-            font-weight: bold;
-            text-shadow: 0 0 10px #ffaa00;
-        }
-        .status-popup {
+        .copy-notification {
             position: fixed;
-            top: 50%;
+            top: 20px;
             left: 50%;
-            transform: translate(-50%, -50%);
-            background: #131a22;
-            padding: 2rem 3rem;
-            border: 2px solid #ffaa00;
-            border-radius: 16px;
-            box-shadow: 0 0 60px rgba(255, 170, 0, 0.3);
-            z-index: 9999;
+            transform: translateX(-50%);
+            background: #00ff88;
+            color: #0a0a0a;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: bold;
+            z-index: 999;
             display: none;
-            text-align: center;
-            min-width: 300px;
+            animation: slideDown 0.5s ease;
+            box-shadow: 0 0 30px #00ff8866;
         }
-        .status-popup .spinner {
-            border: 4px solid #1f2e36;
-            border-top: 4px solid #ffaa00;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem auto;
+        @keyframes slideDown {
+            from {
+                transform: translate(-50%, -100px);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .status-popup p { color: #aaffdd; font-size: 1rem; }
-        .overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 9998;
-            display: none;
+        @media (max-width: 500px) {
+            .container {
+                padding: 20px;
+            }
+            .key-value {
+                font-size: 28px;
+                letter-spacing: 5px;
+            }
+            .btn {
+                font-size: 13px;
+                padding: 12px 15px;
+                min-width: 80px;
+            }
         }
     </style>
 </head>
 <body>
-<div class="overlay" id="overlay"></div>
-<div class="status-popup" id="statusPopup">
-    <div class="spinner"></div>
-    <p id="popupText">⏳ Đang chuyển hướng qua layma.net... Vui lòng hoàn thành để nhận key</p>
-</div>
 
-<div class="container" id="app">
-    <div class="status">
-        <span>🔒 GetKeyFree <span class="highlight">●</span></span>
-        <span>By Ducanh</span>
-    </div>
-    <div class="title">GetKey</div>
-    <div class="sub">HỆ THỐNG: MƯỢT MÀ</div>
-    <div class="sys">
-        <span>PING: <span class="ping-value" id="pingDisplay">--</span>ms</span>
-        <span>ONLINE: 121</span>
+<div class="copy-notification" id="copyNotification">✅ Đã sao chép key!</div>
+
+<div class="container">
+    <h1>🔑 GET KEY FREE</h1>
+    <div class="sub">Chỉ tính giờ khi kích hoạt</div>
+
+    <!-- Key Display -->
+    <div class="key-display">
+        <div class="key-label">🔑 KEY CỦA BẠN</div>
+        <div class="key-value" id="currentKey">XXXXXXXXXX</div>
+        <div class="key-status status-waiting" id="statusBadge">⏳ Chờ kích hoạt</div>
     </div>
 
-    <div style="text-align: left; font-size: 0.8rem; color: #7a9a92; margin-bottom: 0.2rem;">DÁN KEY VÀO Ô ĐỂ TIẾN HÀNH</div>
-    <div class="license-box">
-        <input type="text" id="licenseInput" placeholder="Paste Key" value="">
-    </div>
-
+    <!-- Buttons -->
     <div class="btn-group">
-        <button class="btn" id="confirmBtn">XÁC NHẬN TIẾN HÀNH</button>
-        <button class="btn btn-danger" id="getKeyBtn">GET KEY FREE</button>
+        <button class="btn btn-copy" id="copyBtn">📋 Sao Chép Key</button>
+        <button class="btn btn-spam" id="spamBtn">🚀 Mở Web Spam</button>
     </div>
-
-    <div id="keyDisplay">▶ DÁN KEY HOẶC BẤM GET KEY</div>
-    <div class="footer">
-        <span id="solitudeTrigger">Mua Key Vip Ib Zalo : 0325976017</span>
-    </div>
-    <div class="note">* Key: <span class="vip-badge">Ducanh-XXXX-XXXX</span> (X là số ngẫu nhiên)</div>
 </div>
 
 <script>
     (function() {
-        // === PING REAL ===
-        function measurePing() {
-            const start = performance.now();
-            fetch(window.location.href, { method: 'HEAD', cache: 'no-store' })
-                .then(() => {
-                    const end = performance.now();
-                    const ping = Math.round(end - start);
-                    document.getElementById('pingDisplay').textContent = ping;
-                })
-                .catch(() => {
-                    document.getElementById('pingDisplay').textContent = '--';
-                });
-        }
-        measurePing();
-        setInterval(measurePing, 5000);
+        // ========== CONFIG ==========
+        const SPAM_WEB_URL = 'https://telegram-spam-pro.vercel.app/'; // Thay bằng URL web spam của bạn
+        const STORAGE_KEY = 'all_keys_data';
 
-        // === GENERATE KEY (chỉ có dạng Ducanh-XXXX-XXXX) ===
-        function generateKey() {
-            const chars = '0123456789';
-            let seg1 = '', seg2 = '';
-            for (let i = 0; i < 4; i++) {
-                seg1 += chars.charAt(Math.floor(Math.random() * chars.length));
-                seg2 += chars.charAt(Math.floor(Math.random() * chars.length));
+        // ========== DOM REFS ==========
+        const currentKeyDisplay = document.getElementById('currentKey');
+        const statusBadge = document.getElementById('statusBadge');
+        const copyNotification = document.getElementById('copyNotification');
+        const copyBtn = document.getElementById('copyBtn');
+        const spamBtn = document.getElementById('spamBtn');
+
+        // ========== UTILITY ==========
+        // Tạo key chỉ gồm 10 chữ cái in hoa (A-Z)
+        function generateRandomKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let key = '';
+            for (let i = 0; i < 10; i++) {
+                key += chars.charAt(Math.floor(Math.random() * chars.length));
             }
-            return 'Ducanh-' + seg1 + '-' + seg2;
+            return key;
         }
 
-        const licenseInput = document.getElementById('licenseInput');
-        const confirmBtn = document.getElementById('confirmBtn');
-        const getKeyBtn = document.getElementById('getKeyBtn');
-        const keyDisplay = document.getElementById('keyDisplay');
-        const solitudeTrigger = document.getElementById('solitudeTrigger');
-        const overlay = document.getElementById('overlay');
-        const popup = document.getElementById('statusPopup');
-        const popupText = document.getElementById('popupText');
-
-        function showPopup(msg) {
-            popupText.textContent = msg;
-            overlay.style.display = 'block';
-            popup.style.display = 'block';
+        // Lấy tất cả key đã tạo từ localStorage
+        function getAllKeys() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEY);
+                return data ? JSON.parse(data) : [];
+            } catch (e) {
+                return [];
+            }
         }
 
-        function hidePopup() {
-            overlay.style.display = 'none';
-            popup.style.display = 'none';
+        // Lưu danh sách key
+        function saveAllKeys(keys) {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(keys));
+            } catch (e) {}
         }
 
-        // === XÁC NHẬN ===
-        confirmBtn.addEventListener('click', function() {
-            let currentKey = licenseInput.value.trim();
-            if (currentKey === '') {
-                keyDisplay.textContent = '⚠ LỖI: KEY TRỐNG';
-                keyDisplay.style.color = '#ff5577';
-                keyDisplay.style.textShadow = 'none';
+        // Tạo key mới
+        function createNewKey() {
+            // Tạo key ngẫu nhiên
+            const newKey = generateRandomKey();
+            
+            // Lấy danh sách key hiện tại
+            const allKeys = getAllKeys();
+            
+            // Thêm key mới vào đầu danh sách
+            allKeys.unshift({
+                key: newKey,
+                createdAt: Date.now(),
+                status: 'waiting', // waiting, active, expired
+                activatedAt: null
+            });
+            
+            // Lưu lại
+            saveAllKeys(allKeys);
+            
+            // Cập nhật giao diện
+            currentKeyDisplay.textContent = newKey;
+            statusBadge.textContent = '⏳ Chờ kích hoạt';
+            statusBadge.className = 'key-status status-waiting';
+            
+            return newKey;
+        }
+
+        // Kích hoạt key
+        function activateKey(key) {
+            const allKeys = getAllKeys();
+            const found = allKeys.find(item => item.key === key);
+            
+            if (found) {
+                found.status = 'active';
+                found.activatedAt = Date.now();
+                saveAllKeys(allKeys);
+                
+                // Nếu là key hiện tại, cập nhật badge
+                if (key === currentKeyDisplay.textContent) {
+                    statusBadge.textContent = '✅ Đã kích hoạt';
+                    statusBadge.className = 'key-status status-active';
+                }
+                return true;
+            }
+            return false;
+        }
+
+        // ========== COPY KEY ==========
+        function copyCurrentKey() {
+            const key = currentKeyDisplay.textContent;
+            if (!key || key === 'XXXXXXXXXX') {
+                alert('❌ Chưa có key!');
                 return;
             }
 
-            const regexNormal = /^Ducanh-[0-9]{4}-[0-9]{4}$/;
+            navigator.clipboard.writeText(key).then(() => {
+                copyNotification.style.display = 'block';
+                copyNotification.textContent = `✅ Đã sao chép key: ${key}`;
+                setTimeout(() => {
+                    copyNotification.style.display = 'none';
+                }, 2000);
+            }).catch(() => {
+                const textarea = document.createElement('textarea');
+                textarea.value = key;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                copyNotification.style.display = 'block';
+                copyNotification.textContent = `✅ Đã sao chép key: ${key}`;
+                setTimeout(() => {
+                    copyNotification.style.display = 'none';
+                }, 2000);
+            });
+        }
 
-            if (regexNormal.test(currentKey)) {
-                keyDisplay.textContent = '✅ XÁC NHẬN THÀNH CÔNG · KEY: ' + currentKey;
-                keyDisplay.style.color = '#00ffc8';
-                keyDisplay.style.textShadow = 'none';
-            } else {
-                keyDisplay.textContent = '❌ KEY KHÔNG HỢP LỆ';
-                keyDisplay.style.color = '#ff5577';
-                keyDisplay.style.textShadow = 'none';
-            }
+        // ========== EVENT LISTENERS ==========
+        copyBtn.addEventListener('click', copyCurrentKey);
+
+        spamBtn.addEventListener('click', function() {
+            window.open(SPAM_WEB_URL, '_blank');
         });
 
-        // === GET KEY FREE (layma.net) ===
-        getKeyBtn.addEventListener('click', function() {
-            showPopup('⏳ Đang chuyển hướng qua layma.net... Vui lòng hoàn thành để nhận key');
-
-            window.open('https://layma.net/K2tZ7tRRr', '_blank');
-
-            setTimeout(function() {
-                hidePopup();
-                keyDisplay.textContent = '📌 Đã mở link layma.net trong tab mới. Sau khi hoàn thành, quay lại trang này và key sẽ tự động được điền.';
-                keyDisplay.style.color = '#ffaa44';
-                keyDisplay.style.textShadow = 'none';
-
-                let checkInterval = setInterval(function() {
-                    if (document.hasFocus()) {
-                        const newKey = generateKey();
-                        licenseInput.value = newKey;
-                        keyDisplay.textContent = '🔑 KEY TỪ layma.net: ' + newKey + ' (đã tự động điền)';
-                        keyDisplay.style.color = '#00ffc8';
-                        keyDisplay.style.textShadow = 'none';
-                        clearInterval(checkInterval);
-                    }
-                }, 3000);
-
-                setTimeout(function() {
-                    clearInterval(checkInterval);
-                }, 60000);
-            }, 3000);
-        });
-
-        // === MUA KEY VIP ===
-        solitudeTrigger.addEventListener('click', function() {
-            const sampleVip = generateKey();
-            keyDisplay.textContent = '📞 LIÊN HỆ ZALO : 0325976017 ĐỂ MUA KEY · Ví dụ: ' + sampleVip;
-            keyDisplay.style.color = '#ffaa44';
-            keyDisplay.style.textShadow = 'none';
-        });
-
-        // === INIT ===
-        window.addEventListener('load', function() {
-            keyDisplay.textContent = '▶ DÁN KEY HOẶC BẤM GET KEY';
-            keyDisplay.style.color = '#7a9a92';
-            keyDisplay.style.textShadow = 'none';
-        });
-
-        document.addEventListener('visibilitychange', function() {
-            if (document.visibilityState === 'visible') {
-                const currentKey = licenseInput.value.trim();
-                if (currentKey === '' || !/^Ducanh-[0-9]{4}-[0-9]{4}$/.test(currentKey)) {
-                    const newKey = generateKey();
-                    licenseInput.value = newKey;
-                    keyDisplay.textContent = '🔑 KEY TỪ layma.net: ' + newKey + ' (tự động điền khi quay lại)';
-                    keyDisplay.style.color = '#00ffc8';
-                    keyDisplay.style.textShadow = 'none';
+        // ========== CHECK KÍCH HOẠT TỪ URL ==========
+        function checkActivationFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const key = params.get('key');
+            const action = params.get('action');
+            
+            if (action === 'activate' && key) {
+                // Xóa params trên URL
+                const newUrl = window.location.pathname + window.location.hash;
+                window.history.replaceState({}, document.title, newUrl);
+                
+                // Kích hoạt key
+                const result = activateKey(key.toUpperCase());
+                if (result) {
+                    console.log('✅ Key đã được kích hoạt:', key);
+                } else {
+                    console.log('❌ Key không tồn tại:', key);
                 }
+                return true;
             }
-        });
+            return false;
+        }
+
+        // ========== INIT ==========
+        function init() {
+            // Kiểm tra kích hoạt từ URL trước
+            checkActivationFromURL();
+            
+            // Tạo key mới (mỗi lần vào web)
+            createNewKey();
+            
+            console.log('🔑 Key mới đã được tạo:', currentKeyDisplay.textContent);
+        }
+
+        // Chạy init
+        init();
+
     })();
 </script>
 </body>
