@@ -84,6 +84,11 @@
             color: #00ff88;
             border: 1px solid #00ff88;
         }
+        .status-expired {
+            background: #ff334422;
+            color: #ff3344;
+            border: 1px solid #ff3344;
+        }
         .btn-group {
             display: flex;
             gap: 10px;
@@ -121,6 +126,21 @@
             box-shadow: 0 0 30px #ff334466;
             transform: scale(1.02);
         }
+        .btn-activate {
+            background: #00ff88;
+            color: #0a0a0a;
+        }
+        .btn-activate:hover {
+            background: #00dd77;
+            box-shadow: 0 0 30px #00ff8866;
+            transform: scale(1.02);
+        }
+        .btn-activate:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
         .copy-notification {
             position: fixed;
             top: 20px;
@@ -145,6 +165,18 @@
                 transform: translate(-50%, 0);
                 opacity: 1;
             }
+        }
+        .info-text {
+            color: #888;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .info-text a {
+            color: #ff8800;
+            text-decoration: none;
+        }
+        .info-text a:hover {
+            text-decoration: underline;
         }
         @media (max-width: 500px) {
             .container {
@@ -175,12 +207,19 @@
         <div class="key-label">🔑 KEY CỦA BẠN</div>
         <div class="key-value" id="currentKey">XXXXXXXXXX</div>
         <div class="key-status status-waiting" id="statusBadge">⏳ Chờ kích hoạt</div>
+        <div style="margin-top:10px; font-size:13px; color:#888;" id="expiryInfo">⏳ Chưa kích hoạt</div>
     </div>
 
     <!-- Buttons -->
     <div class="btn-group">
         <button class="btn btn-copy" id="copyBtn">📋 Sao Chép Key</button>
+        <button class="btn btn-activate" id="activateBtn">✅ Kích Hoạt Key</button>
         <button class="btn btn-spam" id="spamBtn">🚀 Mở Web Spam</button>
+    </div>
+
+    <div class="info-text">
+        ⚡ Key sẽ được lưu và tự động kích hoạt khi bạn mở Web Spam<br>
+        <span style="color:#00aa66;">📌 Lưu ý: Mỗi key chỉ kích hoạt được 1 lần duy nhất</span>
     </div>
 </div>
 
@@ -189,18 +228,20 @@
         // ========== CONFIG ==========
         const SPAM_WEB_URL = 'https://telegram-spam-pro.vercel.app/'; // Thay bằng URL web spam của bạn
         const STORAGE_KEY = 'all_keys_data';
+        const ACTIVATED_KEYS_KEY = 'activated_keys'; // Lưu danh sách key đã kích hoạt
 
         // ========== DOM REFS ==========
         const currentKeyDisplay = document.getElementById('currentKey');
         const statusBadge = document.getElementById('statusBadge');
+        const expiryInfo = document.getElementById('expiryInfo');
         const copyNotification = document.getElementById('copyNotification');
         const copyBtn = document.getElementById('copyBtn');
         const spamBtn = document.getElementById('spamBtn');
+        const activateBtn = document.getElementById('activateBtn');
 
         // ========== UTILITY ==========
-        // Tạo key chỉ gồm 10 chữ cái in hoa (A-Z)
         function generateRandomKey() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let key = '';
             for (let i = 0; i < 10; i++) {
                 key += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -208,7 +249,6 @@
             return key;
         }
 
-        // Lấy tất cả key đã tạo từ localStorage
         function getAllKeys() {
             try {
                 const data = localStorage.getItem(STORAGE_KEY);
@@ -218,58 +258,136 @@
             }
         }
 
-        // Lưu danh sách key
         function saveAllKeys(keys) {
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(keys));
             } catch (e) {}
         }
 
+        function getActivatedKeys() {
+            try {
+                const data = localStorage.getItem(ACTIVATED_KEYS_KEY);
+                return data ? JSON.parse(data) : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveActivatedKeys(activated) {
+            try {
+                localStorage.setItem(ACTIVATED_KEYS_KEY, JSON.stringify(activated));
+            } catch (e) {}
+        }
+
         // Tạo key mới
         function createNewKey() {
-            // Tạo key ngẫu nhiên
+            // Xóa key cũ nếu có
+            const oldKey = currentKeyDisplay.textContent;
+            if (oldKey && oldKey !== 'XXXXXXXXXX') {
+                // Không xóa key cũ, chỉ tạo mới
+            }
+
             const newKey = generateRandomKey();
-            
-            // Lấy danh sách key hiện tại
             const allKeys = getAllKeys();
             
-            // Thêm key mới vào đầu danh sách
+            // Kiểm tra key đã tồn tại chưa
+            const exists = allKeys.some(item => item.key === newKey);
+            if (exists) {
+                // Nếu trùng, tạo lại
+                return createNewKey();
+            }
+
+            // Thêm key mới với trạng thái 'waiting'
             allKeys.unshift({
                 key: newKey,
                 createdAt: Date.now(),
-                status: 'waiting', // waiting, active, expired
-                activatedAt: null
+                status: 'waiting',
+                activatedAt: null,
+                expiryTime: null
             });
             
-            // Lưu lại
             saveAllKeys(allKeys);
             
-            // Cập nhật giao diện
             currentKeyDisplay.textContent = newKey;
             statusBadge.textContent = '⏳ Chờ kích hoạt';
             statusBadge.className = 'key-status status-waiting';
+            expiryInfo.textContent = '⏳ Chưa kích hoạt - Bấm "Kích Hoạt Key" để sử dụng';
+            activateBtn.disabled = false;
+            activateBtn.textContent = '✅ Kích Hoạt Key';
             
             return newKey;
         }
 
-        // Kích hoạt key
-        function activateKey(key) {
+        // Kích hoạt key (lưu vào localStorage để web Spam đọc được)
+        function activateCurrentKey() {
+            const key = currentKeyDisplay.textContent;
+            if (!key || key === 'XXXXXXXXXX') {
+                alert('❌ Chưa có key!');
+                return false;
+            }
+
+            // Kiểm tra key đã được kích hoạt chưa (từ danh sách đã kích hoạt)
+            const activatedKeys = getActivatedKeys();
+            if (activatedKeys[key]) {
+                alert('⚠️ Key này đã được kích hoạt trước đó!');
+                return false;
+            }
+
+            // Cập nhật trạng thái key trong danh sách
             const allKeys = getAllKeys();
             const found = allKeys.find(item => item.key === key);
             
             if (found) {
+                if (found.status === 'active') {
+                    alert('⚠️ Key đã được kích hoạt!');
+                    return false;
+                }
                 found.status = 'active';
                 found.activatedAt = Date.now();
+                found.expiryTime = Date.now() + 60 * 60 * 1000; // 1 giờ
                 saveAllKeys(allKeys);
-                
-                // Nếu là key hiện tại, cập nhật badge
-                if (key === currentKeyDisplay.textContent) {
-                    statusBadge.textContent = '✅ Đã kích hoạt';
-                    statusBadge.className = 'key-status status-active';
-                }
-                return true;
             }
-            return false;
+
+            // Lưu vào danh sách key đã kích hoạt
+            activatedKeys[key] = {
+                activatedAt: Date.now(),
+                expiryTime: Date.now() + 60 * 60 * 1000,
+                status: 'active'
+            };
+            saveActivatedKeys(activatedKeys);
+
+            // Cập nhật giao diện
+            statusBadge.textContent = '✅ Đã kích hoạt';
+            statusBadge.className = 'key-status status-active';
+            const timeRemaining = getTimeRemaining(Date.now() + 60 * 60 * 1000);
+            expiryInfo.textContent = `⏳ Còn lại: ${timeRemaining}`;
+            activateBtn.disabled = true;
+            activateBtn.textContent = '✅ Đã Kích Hoạt';
+
+            // Gửi thông báo
+            showNotification(`✅ Key ${key} đã được kích hoạt thành công!`);
+            
+            // Thông báo cho web Spam bằng cách lưu vào localStorage (đã lưu ở trên)
+            console.log('✅ Key đã được kích hoạt và lưu vào localStorage');
+            
+            return true;
+        }
+
+        function getTimeRemaining(expiry) {
+            const diff = expiry - Date.now();
+            if (diff <= 0) return 'Hết hạn';
+            const hours = Math.floor(diff / (60 * 60 * 1000));
+            const minutes = Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000));
+            if (hours > 0) return `${hours} giờ ${minutes} phút`;
+            return `${minutes} phút`;
+        }
+
+        function showNotification(message) {
+            copyNotification.style.display = 'block';
+            copyNotification.textContent = message;
+            setTimeout(() => {
+                copyNotification.style.display = 'none';
+            }, 3000);
         }
 
         // ========== COPY KEY ==========
@@ -281,11 +399,7 @@
             }
 
             navigator.clipboard.writeText(key).then(() => {
-                copyNotification.style.display = 'block';
-                copyNotification.textContent = `✅ Đã sao chép key: ${key}`;
-                setTimeout(() => {
-                    copyNotification.style.display = 'none';
-                }, 2000);
+                showNotification(`✅ Đã sao chép key: ${key}`);
             }).catch(() => {
                 const textarea = document.createElement('textarea');
                 textarea.value = key;
@@ -293,18 +407,36 @@
                 textarea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textarea);
-                copyNotification.style.display = 'block';
-                copyNotification.textContent = `✅ Đã sao chép key: ${key}`;
-                setTimeout(() => {
-                    copyNotification.style.display = 'none';
-                }, 2000);
+                showNotification(`✅ Đã sao chép key: ${key}`);
             });
+        }
+
+        // ========== KIỂM TRA KEY TỪ SPAM WEB ==========
+        function checkKeyFromSpamWeb() {
+            // Kiểm tra xem có key nào đã được kích hoạt từ web Spam không
+            const activatedKeys = getActivatedKeys();
+            const currentKey = currentKeyDisplay.textContent;
+            
+            if (currentKey && currentKey !== 'XXXXXXXXXX' && activatedKeys[currentKey]) {
+                const data = activatedKeys[currentKey];
+                if (data.status === 'active') {
+                    statusBadge.textContent = '✅ Đã kích hoạt';
+                    statusBadge.className = 'key-status status-active';
+                    const timeRemaining = getTimeRemaining(data.expiryTime);
+                    expiryInfo.textContent = `⏳ Còn lại: ${timeRemaining}`;
+                    activateBtn.disabled = true;
+                    activateBtn.textContent = '✅ Đã Kích Hoạt';
+                }
+            }
         }
 
         // ========== EVENT LISTENERS ==========
         copyBtn.addEventListener('click', copyCurrentKey);
 
+        activateBtn.addEventListener('click', activateCurrentKey);
+
         spamBtn.addEventListener('click', function() {
+            // Mở web spam trong tab mới
             window.open(SPAM_WEB_URL, '_blank');
         });
 
@@ -319,12 +451,13 @@
                 const newUrl = window.location.pathname + window.location.hash;
                 window.history.replaceState({}, document.title, newUrl);
                 
-                // Kích hoạt key
-                const result = activateKey(key.toUpperCase());
-                if (result) {
-                    console.log('✅ Key đã được kích hoạt:', key);
-                } else {
-                    console.log('❌ Key không tồn tại:', key);
+                // Hiển thị key và kích hoạt
+                if (key) {
+                    currentKeyDisplay.textContent = key.toUpperCase();
+                    // Tự động kích hoạt
+                    setTimeout(() => {
+                        activateCurrentKey();
+                    }, 500);
                 }
                 return true;
             }
@@ -339,7 +472,11 @@
             // Tạo key mới (mỗi lần vào web)
             createNewKey();
             
+            // Kiểm tra key từ web Spam
+            checkKeyFromSpamWeb();
+            
             console.log('🔑 Key mới đã được tạo:', currentKeyDisplay.textContent);
+            console.log('💡 Hướng dẫn: Bấm "Kích Hoạt Key" để kích hoạt key, sau đó mở Web Spam để sử dụng.');
         }
 
         // Chạy init
